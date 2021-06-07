@@ -6,8 +6,8 @@ import { getRandomCountry } from "./Components/PlaceGenerator";
 import Header from "./Components/Header";
 
 const initialPinLocation = {
-  lat: 38.0336,
-  lng: -78.508,
+  lat: 0,
+  lng: 0,
 };
 
 const { REACT_APP_APIKEY } = process.env;
@@ -50,19 +50,26 @@ function App() {
   }
 
   return (
-    <div className="container">
-      <Header
-        currLocation={currLocation[0]}
-        lives={lives}
-        gameState={gameState}
-        score={score}
-      />
-      <Map
-        initialCenter={initialPinLocation}
-        zoomLevel={0}
-        onClick={checkClick}
-      />
-    </div>
+    <>
+      <div className="headerPanel">
+        <Header
+          currLocation={currLocation[0]}
+          lives={lives}
+          gameState={gameState}
+          score={score}
+        />
+      </div>
+      <div className="progressPanel">
+        <h2>Progress</h2>
+      </div>
+      <div className="mapPanel">
+        <Map
+          initialCenter={initialPinLocation}
+          zoomLevel={0}
+          onClick={checkClick}
+        />
+      </div>
+    </>
   );
 }
 

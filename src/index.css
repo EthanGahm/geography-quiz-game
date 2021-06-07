@@ -12,9 +12,29 @@ code {
     monospace;
 }
 
-.container {
+.headerPanel {
+  line-height: 0.5;
+  text-align: center;
   width: 80vw;
-  height: 80vh;
+  margin: 30px auto;
+  overflow: auto;
+  border: 3px solid rgb(43, 124, 40);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.progressPanel {
+  width: 80vw;
+  margin: 30px auto;
+  overflow: auto;
+  border: 3px solid rgb(43, 124, 40);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.mapPanel {
+  width: 80vw;
+  height: 60vh;
   margin: 30px auto;
   overflow: auto;
   border: 3px solid rgb(43, 124, 40);
@@ -24,7 +44,8 @@ code {
 
 .google-map {
   display: flex;
-  height: 70vh;
+  height: 60vh;
+  width: 80vw;
 }
 
 .map-h2 {
