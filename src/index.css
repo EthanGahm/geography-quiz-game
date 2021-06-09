@@ -15,17 +15,19 @@ code {
 .headerPanel {
   line-height: 0.5;
   text-align: center;
-  width: 80vw;
-  margin: 30px auto;
+  width: 95vw;
+  margin: 2.5vh auto;
   overflow: auto;
   border: 3px solid rgb(43, 124, 40);
   padding: 10px;
   border-radius: 5px;
 }
 
-.progressPanel {
-  width: 80vw;
-  margin: 30px auto;
+.gamePanel {
+  text-align: center;
+  width: 95vw;
+  line-height: 0.5;
+  margin: 2.5vh auto;
   overflow: auto;
   border: 3px solid rgb(43, 124, 40);
   padding: 10px;
@@ -33,9 +35,9 @@ code {
 }
 
 .mapPanel {
-  width: 80vw;
-  height: 60vh;
-  margin: 30px auto;
+  width: 95vw;
+  height: 100%;
+  margin: 2.5vh auto;
   overflow: auto;
   border: 3px solid rgb(43, 124, 40);
   padding: 10px;
@@ -44,8 +46,9 @@ code {
 
 .google-map {
   display: flex;
+  align-items: center;
   height: 60vh;
-  width: 80vw;
+  width: 92.2vw;
 }
 
 .map-h2 {
@@ -53,11 +56,38 @@ code {
   font-weight: 400;
 }
 
-.pin {
-  display: flex;
-  width: 40px;
+.placeName {
+  float: left;
 }
 
-.pin-icon {
-  font-size: 10vw;
+.timer {
+  float: right;
+}
+
+.button {
+  width: 80%;
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 20px;
+  font-family: inherit;
+}
+
+.button:focus {
+  outline: none;
+}
+
+.button:active {
+  transform: scale(0.98);
+}
+
+@import url("https://fonts.googleapis.com/css?family=Montserrat&display=swap");
+
+* {
+  box-sizing: border-box;
 }

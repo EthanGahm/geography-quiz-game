@@ -4,6 +4,8 @@ import React from "react";
 import axios from "axios";
 import { getRandomCountry } from "./Components/PlaceGenerator";
 import Header from "./Components/Header";
+import GameElements from "./Components/GameElements";
+import { Progress } from "semantic-ui-react";
 
 const initialPinLocation = {
   lat: 0,
@@ -24,9 +26,9 @@ const getCountry = async (lat, lng) => {
 
 function App() {
   const [currLocation, setCurrLocation] = React.useState(getRandomCountry());
-  const [lives, setLives] = React.useState(3);
-  const [gameState, setGameState] = React.useState("game");
-  const [score, setScore] = React.useState(0);
+  const [gameState, setGameState] = React.useState("start");
+  const [score, setScore] = React.useState(1);
+  const [scoreOutOf, setScoreOutOf] = React.useState(10);
 
   React.useEffect(() => {
     Geocode.setApiKey(REACT_APP_APIKEY);
@@ -36,31 +38,41 @@ function App() {
     let clickCountry = getCountry(lat, lng);
     clickCountry
       .then((clickCountry) => {
+        console.log(clickCountry);
         if (clickCountry === currLocation[1]) {
           setScore(() => score + 1);
-          setCurrLocation(getRandomCountry());
-        } else {
-          if (lives <= 1) {
-            setGameState("game over");
+          if (score === scoreOutOf) {
+            finish();
+          } else {
+            setCurrLocation(getRandomCountry());
           }
-          setLives(() => lives - 1);
         }
       })
       .catch(() => {});
   }
 
+  function start() {
+    setGameState("game");
+  }
+
+  function finish() {
+    setGameState("game over");
+  }
+
   return (
     <>
       <div className="headerPanel">
-        <Header
-          currLocation={currLocation[0]}
-          lives={lives}
-          gameState={gameState}
-          score={score}
-        />
+        <Header />
       </div>
-      <div className="progressPanel">
-        <h2>Progress</h2>
+      <div className="gamePanel">
+        <GameElements
+          score={score}
+          scoreOutOf={scoreOutOf}
+          currLocation={currLocation[0]}
+          onStart={start}
+          onRestart={start}
+          gameState={gameState}
+        />
       </div>
       <div className="mapPanel">
         <Map
