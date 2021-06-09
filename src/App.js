@@ -5,7 +5,6 @@ import axios from "axios";
 import { getRandomCountry } from "./Components/PlaceGenerator";
 import Header from "./Components/Header";
 import GameElements from "./Components/GameElements";
-import { Progress } from "semantic-ui-react";
 
 const initialPinLocation = {
   lat: 0,
@@ -25,14 +24,31 @@ const getCountry = async (lat, lng) => {
 };
 
 function App() {
-  const [currLocation, setCurrLocation] = React.useState(getRandomCountry());
+  const [currLocation, setCurrLocation] = React.useState([]);
   const [gameState, setGameState] = React.useState("start");
   const [score, setScore] = React.useState(1);
   const [scoreOutOf, setScoreOutOf] = React.useState(10);
+  const [time, setTime] = React.useState(0);
 
   React.useEffect(() => {
     Geocode.setApiKey(REACT_APP_APIKEY);
   }, []);
+
+  React.useEffect(() => {
+    let interval = null;
+
+    if (gameState === "game") {
+      console.log("gameState == game");
+      interval = setInterval(() => {
+        setTime((prevTime) => prevTime + 1);
+      }, 10);
+    } else {
+      console.log("gameState != game");
+      clearInterval(interval);
+    }
+
+    return () => clearInterval(interval);
+  }, [gameState]);
 
   function checkClick(lat, lng) {
     let clickCountry = getCountry(lat, lng);
@@ -53,6 +69,9 @@ function App() {
 
   function start() {
     setGameState("game");
+    setCurrLocation(getRandomCountry());
+    setScore(1);
+    setTime(0);
   }
 
   function finish() {
@@ -72,12 +91,13 @@ function App() {
           onStart={start}
           onRestart={start}
           gameState={gameState}
+          time={time}
         />
       </div>
       <div className="mapPanel">
         <Map
           initialCenter={initialPinLocation}
-          zoomLevel={0}
+          zoomLevel={3}
           onClick={checkClick}
         />
       </div>

@@ -1,4 +1,5 @@
 import { Progress } from "semantic-ui-react";
+import FormatTime from "./FormatTime";
 import Timer from "./Timer";
 
 const GameElements = ({
@@ -8,6 +9,7 @@ const GameElements = ({
   scoreOutOf,
   onStart,
   onRestart,
+  time,
 }) => {
   switch (gameState) {
     case "start":
@@ -33,13 +35,15 @@ const GameElements = ({
             <h2>Find: {currLocation}</h2>
           </div>
           <div className="timer">
-            <Timer time="0:00" />
+            <Timer time={time} />
           </div>
         </>
       );
     case "game over":
       return (
         <>
+          <h2>Nice work!</h2>
+          <h3>Your time: {FormatTime(time)}</h3>
           <button className="button" onClick={onRestart}>
             Play Again
           </button>

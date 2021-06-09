@@ -12,6 +12,7 @@ const Map = ({ initialCenter, zoomLevel, onClick }) => {
   const _mapStyles = {
     styles: mapStyles,
     fullscreenControl: false,
+    minZoom: 2,
   };
 
   return (
