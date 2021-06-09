@@ -35,6 +35,7 @@ code {
 }
 
 .mapPanel {
+  text-align: center;
   width: 95vw;
   height: 100%;
   margin: 2.5vh auto;
@@ -45,10 +46,8 @@ code {
 }
 
 .google-map {
-  display: flex;
-  align-items: center;
   height: 60vh;
-  width: 92.2vw;
+  width: 100%;
 }
 
 .map-h2 {
@@ -84,6 +83,37 @@ code {
 
 .button:active {
   transform: scale(0.98);
+}
+
+.container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.correctPing {
+  border: 10px solid rgb(43, 124, 40);
+  border-radius: 50%;
+  animation: load 1s ease-out 2;
+}
+
+.incorrectPing {
+  opacity: 0;
+  border: 10px solid rgb(124, 43, 40);
+  border-radius: 50%;
+  animation: load 1s ease-out 2;
+}
+
+@keyframes load {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @import url("https://fonts.googleapis.com/css?family=Montserrat&display=swap");

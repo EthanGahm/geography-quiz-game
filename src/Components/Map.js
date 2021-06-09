@@ -24,7 +24,14 @@ const Map = ({ initialCenter, zoomLevel, onClick }) => {
           defaultZoom={zoomLevel}
           onClick={_onClick}
           options={_mapStyles}
-        ></GoogleMapReact>
+        >
+          <div
+            className="incorrectPing"
+            lat={0}
+            lng={0}
+            style={{ position: "absolute", transform: "translate(-50%, -50%)" }}
+          ></div>
+        </GoogleMapReact>
       </div>
     </div>
   );
