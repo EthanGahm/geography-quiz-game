@@ -1,5 +1,5 @@
 import { Progress } from "semantic-ui-react";
-import FormatTime from "./FormatTime";
+import FormatTime from "../Methods/FormatTime";
 import Timer from "./Timer";
 
 const GameElements = ({
@@ -24,7 +24,6 @@ const GameElements = ({
       return (
         <>
           <Progress
-            percent={(score / scoreOutOf) * 100}
             value={score}
             total={scoreOutOf}
             progress="ratio"

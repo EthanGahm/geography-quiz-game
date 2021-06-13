@@ -1,4 +1,4 @@
-export function FormatTime(time) {
+export function formatTime(time) {
   let date = new Date(time * 10);
   let mm = date.getUTCMinutes();
   let ss = date.getSeconds();
@@ -16,4 +16,4 @@ export function FormatTime(time) {
   return formattedTime;
 }
 
-export default FormatTime;
+export default formatTime;

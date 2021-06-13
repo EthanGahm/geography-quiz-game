@@ -1,4 +1,4 @@
-import FormatTime from "./FormatTime";
+import FormatTime from "../Methods/FormatTime";
 
 const Timer = ({ time }) => {
   return (

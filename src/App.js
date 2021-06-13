@@ -1,10 +1,10 @@
 import Map from "./Components/Map";
 import Geocode from "react-geocode";
 import React from "react";
-import axios from "axios";
 import { getRandomCountry } from "./Components/PlaceGenerator";
 import Header from "./Components/Header";
 import GameElements from "./Components/GameElements";
+import checkClick from "./Methods/CheckClick";
 
 const initialPinLocation = {
   lat: 0,
@@ -13,22 +13,14 @@ const initialPinLocation = {
 
 const { REACT_APP_APIKEY } = process.env;
 
-const getCountry = async (lat, lng) => {
-  const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat.toString()},${lng.toString()}&location_type=APPROXIMATE&result_type=country&key=${REACT_APP_APIKEY}`;
-
-  let res = axios.get(url);
-
-  return res.then(
-    (res) => res.data.results[0].address_components[0].short_name
-  );
-};
-
 function App() {
   const [currLocation, setCurrLocation] = React.useState([]);
   const [gameState, setGameState] = React.useState("start");
   const [score, setScore] = React.useState(1);
   const [scoreOutOf, setScoreOutOf] = React.useState(10);
   const [time, setTime] = React.useState(0);
+  const [pings, setPings] = React.useState([]);
+  const [pingCount, setPingCount] = React.useState(0);
 
   React.useEffect(() => {
     Geocode.setApiKey(REACT_APP_APIKEY);
@@ -38,33 +30,42 @@ function App() {
     let interval = null;
 
     if (gameState === "game") {
-      console.log("gameState == game");
       interval = setInterval(() => {
         setTime((prevTime) => prevTime + 1);
       }, 10);
     } else {
-      console.log("gameState != game");
       clearInterval(interval);
     }
 
     return () => clearInterval(interval);
   }, [gameState]);
 
-  function checkClick(lat, lng) {
-    let clickCountry = getCountry(lat, lng);
-    clickCountry
-      .then((clickCountry) => {
-        console.log(clickCountry);
-        if (clickCountry === currLocation[1]) {
+  function onMapClick(lat, lng) {
+    if (gameState === "game") {
+      let correct = checkClick(lat, lng, currLocation);
+      correct.then((correct) => {
+        if (correct) {
           setScore(() => score + 1);
           if (score === scoreOutOf) {
             finish();
           } else {
+            setPingCount(() => pingCount + 1);
+            setPings([
+              { lat: lat, lng: lng, class: "correctPing", id: pingCount },
+              ...pings,
+            ]);
             setCurrLocation(getRandomCountry());
           }
+        } else {
+          setPingCount(() => pingCount + 1);
+          setPings([
+            { lat: lat, lng: lng, class: "incorrectPing", id: pingCount },
+            ...pings,
+          ]);
         }
-      })
-      .catch(() => {});
+      });
+    }
+    console.log(pings.length);
   }
 
   function start() {
@@ -76,6 +77,10 @@ function App() {
 
   function finish() {
     setGameState("game over");
+  }
+
+  function removePing() {
+    setPings(pings.slice(0, pings.length - 1));
   }
 
   return (
@@ -98,7 +103,9 @@ function App() {
         <Map
           initialCenter={initialPinLocation}
           zoomLevel={3}
-          onClick={checkClick}
+          onClick={onMapClick}
+          pings={pings}
+          removePing={removePing}
         />
       </div>
     </>

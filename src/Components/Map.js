@@ -1,10 +1,11 @@
 import React from "react";
 import GoogleMapReact from "google-map-react";
 import mapStyles from "./MapStyles.json";
+import Ping from "./Ping";
 
 const { REACT_APP_APIKEY } = process.env;
 
-const Map = ({ initialCenter, zoomLevel, onClick }) => {
+const Map = ({ initialCenter, zoomLevel, onClick, pings, removePing }) => {
   const _onClick = ({ x, y, lat, lng, event }) => {
     onClick(lat, lng);
   };
@@ -25,12 +26,15 @@ const Map = ({ initialCenter, zoomLevel, onClick }) => {
           onClick={_onClick}
           options={_mapStyles}
         >
-          <div
-            className="incorrectPing"
-            lat={0}
-            lng={0}
-            style={{ position: "absolute", transform: "translate(-50%, -50%)" }}
-          ></div>
+          {pings.map((ping) => (
+            <Ping
+              key={ping.id}
+              className={ping.className}
+              lat={ping.lat}
+              lng={ping.lng}
+              removePing={removePing}
+            />
+          ))}
         </GoogleMapReact>
       </div>
     </div>
