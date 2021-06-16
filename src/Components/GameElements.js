@@ -48,6 +48,8 @@ const GameElements = ({
           </button>
         </>
       );
+    default:
+      return <>GameState error</>;
   }
 };
 

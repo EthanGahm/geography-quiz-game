@@ -1,9 +1,35 @@
 import React from "react";
 import GoogleMapReact from "google-map-react";
-import mapStyles from "./MapStyles.json";
-import Ping from "./Ping";
+// import Ping from "./Ping";
 
 const { REACT_APP_APIKEY } = process.env;
+
+const mapStyles = [
+  {
+    elementType: "labels",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "administrative.land_parcel",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+  {
+    featureType: "administrative.neighborhood",
+    stylers: [
+      {
+        visibility: "off",
+      },
+    ],
+  },
+];
 
 const Map = ({ initialCenter, zoomLevel, onClick, pings, removePing }) => {
   const _onClick = ({ x, y, lat, lng, event }) => {
@@ -26,7 +52,7 @@ const Map = ({ initialCenter, zoomLevel, onClick, pings, removePing }) => {
           onClick={_onClick}
           options={_mapStyles}
         >
-          {pings.map((ping) => (
+          {/* {pings.map((ping) => (
             <Ping
               key={ping.id}
               className={ping.className}
@@ -34,7 +60,7 @@ const Map = ({ initialCenter, zoomLevel, onClick, pings, removePing }) => {
               lng={ping.lng}
               removePing={removePing}
             />
-          ))}
+          ))} */}
         </GoogleMapReact>
       </div>
     </div>
