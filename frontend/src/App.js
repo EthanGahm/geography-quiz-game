@@ -5,6 +5,7 @@ import { getRandomCountry } from "./Components/PlaceGenerator";
 import Header from "./Components/Header";
 import GameElements from "./Components/GameElements";
 import checkClick from "./Methods/CheckClick";
+import io from "socket.io-client";
 
 const initialPinLocation = {
   lat: 0,
@@ -17,15 +18,36 @@ function App() {
   const [currLocation, setCurrLocation] = React.useState([]);
   const [gameState, setGameState] = React.useState("start");
   const [score, setScore] = React.useState(1);
-  const [scoreOutOf, setScoreOutOf] = React.useState(10);
+  const [scoreOutOf, setScoreOutOf] = React.useState(2);
   const [time, setTime] = React.useState(0);
-  const [pings, setPings] = React.useState([]);
-  const [pingCount, setPingCount] = React.useState(0);
+  const [yourID, setYourID] = React.useState();
+  // const [pings, setPings] = React.useState([]);
+  // const [pingCount, setPingCount] = React.useState(0);
+
+  const socketRef = React.useRef();
 
   React.useEffect(() => {
     Geocode.setApiKey(REACT_APP_APIKEY);
+
+    socketRef.current = io.connect("/");
+
+    socketRef.current.on("your id", (id) => {
+      setYourID(id);
+    });
+
+    socketRef.current.on("player finished", (id) => {
+      finish();
+    });
   }, []);
 
+  function sendFinish() {
+    socketRef.current.emit("finished", yourID);
+  }
+
+  // Timer
+  // When gameState changes to "game" a repeating interval of 10
+  // millisenconds is set. When gameState changes away from "game"
+  // interval is cleared and no longer runs.
   React.useEffect(() => {
     let interval = null;
 
@@ -47,25 +69,25 @@ function App() {
         if (correct) {
           setScore(() => score + 1);
           if (score === scoreOutOf) {
+            sendFinish();
             finish();
           } else {
-            setPingCount(() => pingCount + 1);
-            setPings([
-              { lat: lat, lng: lng, class: "correctPing", id: pingCount },
-              ...pings,
-            ]);
+            // setPingCount(() => pingCount + 1);
+            // setPings([
+            //   { lat: lat, lng: lng, class: "correctPing", id: pingCount },
+            //   ...pings,
+            // ]);
             setCurrLocation(getRandomCountry());
           }
         } else {
-          setPingCount(() => pingCount + 1);
-          setPings([
-            { lat: lat, lng: lng, class: "incorrectPing", id: pingCount },
-            ...pings,
-          ]);
+          // setPingCount(() => pingCount + 1);
+          // setPings([
+          //   { lat: lat, lng: lng, class: "incorrectPing", id: pingCount },
+          //   ...pings,
+          // ]);
         }
       });
     }
-    console.log(pings.length);
   }
 
   function start() {
@@ -79,9 +101,9 @@ function App() {
     setGameState("game over");
   }
 
-  function removePing() {
-    setPings(pings.slice(0, pings.length - 1));
-  }
+  // function removePing() {
+  //   setPings(pings.slice(0, pings.length - 1));
+  // }
 
   return (
     <>
@@ -104,8 +126,8 @@ function App() {
           initialCenter={initialPinLocation}
           zoomLevel={3}
           onClick={onMapClick}
-          pings={pings}
-          removePing={removePing}
+          // pings={pings}
+          // removePing={removePing}
         />
       </div>
     </>
