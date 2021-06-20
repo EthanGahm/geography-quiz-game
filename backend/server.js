@@ -8,7 +8,11 @@ const io = socket(server);
 io.on("connection", (socket) => {
   socket.emit("your id", socket.id);
   socket.on("finished", (id) => {
-    io.emit("player finished", id);
+    io.emit("finished", id);
+  });
+
+  socket.on("start", (startTime) => {
+    io.emit("start", startTime);
   });
 });
 
