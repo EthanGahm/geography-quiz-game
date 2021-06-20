@@ -18,13 +18,14 @@ function App() {
   const [currLocation, setCurrLocation] = React.useState([]);
   const [gameState, setGameState] = React.useState("start");
   const [score, setScore] = React.useState(1);
-  const [scoreOutOf, setScoreOutOf] = React.useState(2);
   const [time, setTime] = React.useState(0);
   const [yourID, setYourID] = React.useState();
   // const [pings, setPings] = React.useState([]);
   // const [pingCount, setPingCount] = React.useState(0);
 
   const socketRef = React.useRef();
+  const startTime = React.useRef();
+  const scoreOutOf = React.useRef(2);
 
   React.useEffect(() => {
     Geocode.setApiKey(REACT_APP_APIKEY);
@@ -53,7 +54,7 @@ function App() {
 
     if (gameState === "game") {
       interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
+        setTime(Math.floor(Date.now() / 10) - startTime.current);
       }, 10);
     } else {
       clearInterval(interval);
@@ -68,7 +69,7 @@ function App() {
       correct.then((correct) => {
         if (correct) {
           setScore(() => score + 1);
-          if (score === scoreOutOf) {
+          if (score === scoreOutOf.current) {
             sendFinish();
             finish();
           } else {
@@ -95,6 +96,7 @@ function App() {
     setCurrLocation(getRandomCountry());
     setScore(1);
     setTime(0);
+    startTime.current = Math.floor(Date.now() / 10);
   }
 
   function finish() {
@@ -113,7 +115,7 @@ function App() {
       <div className="gamePanel">
         <GameElements
           score={score}
-          scoreOutOf={scoreOutOf}
+          scoreOutOf={scoreOutOf.current}
           currLocation={currLocation[0]}
           onStart={start}
           onRestart={start}
