@@ -36,13 +36,21 @@ function App() {
       setYourID(id);
     });
 
-    socketRef.current.on("player finished", (id) => {
+    socketRef.current.on("finished", (id) => {
       finish();
+    });
+
+    socketRef.current.on("start", (_startTime) => {
+      start(_startTime);
     });
   }, []);
 
   function sendFinish() {
     socketRef.current.emit("finished", yourID);
+  }
+
+  function sendStart() {
+    socketRef.current.emit("start", Math.floor(Date.now() / 10));
   }
 
   // Timer
@@ -91,12 +99,12 @@ function App() {
     }
   }
 
-  function start() {
+  function start(_startTime) {
     setGameState("game");
     setCurrLocation(getRandomCountry());
     setScore(1);
     setTime(0);
-    startTime.current = Math.floor(Date.now() / 10);
+    startTime.current = _startTime;
   }
 
   function finish() {
@@ -117,8 +125,8 @@ function App() {
           score={score}
           scoreOutOf={scoreOutOf.current}
           currLocation={currLocation[0]}
-          onStart={start}
-          onRestart={start}
+          onStart={sendStart}
+          onRestart={sendStart}
           gameState={gameState}
           time={time}
         />
