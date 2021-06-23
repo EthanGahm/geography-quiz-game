@@ -96,6 +96,14 @@ code {
   transform: scale(0.98);
 }
 
+.inputField {
+  width: 80%;
+  height: 40px;
+  margin: 5px;
+  padding: 3px 7px;
+  font-size: 17px;
+}
+
 .container {
   position: absolute;
   left: 50%;

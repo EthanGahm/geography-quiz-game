@@ -1,16 +1,15 @@
 import React from "react";
-import Header from "../Components/Header";
-import LinkButton from "../Components/LinkButton";
 
-const Home = () => {
+const Home = ({ setPage }) => {
   return (
     <>
       <div className="headerPanel">
-        <Header />
+        <h1>Place Race</h1>
       </div>
       <div className="optionsPanel">
-        <LinkButton>Single Player</LinkButton>
-        <LinkButton to="/Multiplayer">Multiplayer</LinkButton>
+        <button className="button" onClick={() => setPage("single player")}>Single Player</button>
+        <button className="button" onClick={() => setPage("create room")}>Create Room</button>
+        <button className="button" onClick={() => setPage("join room")}>Join Room</button>
       </div>
     </>
   );

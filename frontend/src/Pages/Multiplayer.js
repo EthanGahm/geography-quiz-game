@@ -2,10 +2,8 @@ import Map from "../Components/Map";
 import Geocode from "react-geocode";
 import React from "react";
 import { getRandomCountry } from "../Components/PlaceGenerator";
-import Header from "../Components/Header";
 import GameElements from "../Components/GameElements";
 import checkClick from "../Methods/CheckClick";
-import io from "socket.io-client";
 
 const initialPinLocation = {
   lat: 0,
@@ -14,43 +12,36 @@ const initialPinLocation = {
 
 const { REACT_APP_APIKEY } = process.env;
 
-const Multiplayer = () => {
+const Multiplayer = ({ socket, username, room }) => {
   const [currLocation, setCurrLocation] = React.useState([]);
   const [gameState, setGameState] = React.useState("start");
   const [score, setScore] = React.useState(1);
   const [time, setTime] = React.useState(0);
-  const [yourID, setYourID] = React.useState();
+  const [winner, setWinner] = React.useState("")
   // const [pings, setPings] = React.useState([]);
   // const [pingCount, setPingCount] = React.useState(0);
 
-  const socketRef = React.useRef();
   const startTime = React.useRef();
   const scoreOutOf = React.useRef(2);
 
   React.useEffect(() => {
     Geocode.setApiKey(REACT_APP_APIKEY);
 
-    socketRef.current = io.connect("/");
-
-    socketRef.current.on("your id", (id) => {
-      setYourID(id);
+    socket.on("finished", (username, finishTime) => {
+      finish(username, finishTime);
     });
 
-    socketRef.current.on("finished", (id) => {
-      finish();
+    socket.on("start", (startTime) => {
+      start(startTime);
     });
+  }, [socket]);
 
-    socketRef.current.on("start", (_startTime) => {
-      start(_startTime);
-    });
-  }, []);
-
-  function sendFinish() {
-    socketRef.current.emit("finished", yourID);
+  function sendFinish(username, room, finishTime) {
+    socket.emit("finished", username, room, finishTime);
   }
 
   function sendStart() {
-    socketRef.current.emit("start", Math.floor(Date.now() / 10));
+    socket.emit("start", Math.floor(Date.now() / 10), room);
   }
 
   // Timer
@@ -78,7 +69,7 @@ const Multiplayer = () => {
         if (correct) {
           setScore(() => score + 1);
           if (score === scoreOutOf.current) {
-            sendFinish();
+            sendFinish(username, room, time);
             finish();
           } else {
             // setPingCount(() => pingCount + 1);
@@ -107,7 +98,9 @@ const Multiplayer = () => {
     startTime.current = _startTime;
   }
 
-  function finish() {
+  function finish(username, finishTime) {
+    setTime(finishTime)
+    setWinner(username)
     setGameState("game over");
   }
 
@@ -118,7 +111,7 @@ const Multiplayer = () => {
   return (
     <>
       <div className="headerPanel">
-        <Header />
+        <h1>Room: {room}</h1>
       </div>
       <div className="gamePanel">
         <GameElements
@@ -129,6 +122,8 @@ const Multiplayer = () => {
           onRestart={sendStart}
           gameState={gameState}
           time={time}
+          username={username}
+          winner={winner}
         />
       </div>
       <div className="mapPanel">
@@ -136,8 +131,8 @@ const Multiplayer = () => {
           initialCenter={initialPinLocation}
           zoomLevel={3}
           onClick={onMapClick}
-          // pings={pings}
-          // removePing={removePing}
+        // pings={pings}
+        // removePing={removePing}
         />
       </div>
     </>
