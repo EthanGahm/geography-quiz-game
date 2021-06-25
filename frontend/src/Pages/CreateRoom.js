@@ -1,8 +1,8 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { SocketContext } from '../Context/Socket';
 
-const CreateRoom = ({ socket, username, setUsername, room, setRoom, setPage }) => {
-  const history = useHistory();
+const CreateRoom = ({ username, setUsername, room, setRoom, setPage }) => {
+  const socket = React.useContext(SocketContext);
 
   React.useEffect(() => {
     socket.on("room already exists", () => {
@@ -12,7 +12,7 @@ const CreateRoom = ({ socket, username, setUsername, room, setRoom, setPage }) =
     socket.on("joined room", () => {
       setPage("multiplayer")
     })
-  }, [history, socket, setPage])
+  }, [socket, setPage])
 
   const onSubmit = (event) => {
     event.preventDefault();

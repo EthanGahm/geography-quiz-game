@@ -1,22 +1,30 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
+import { SocketContext } from '../Context/Socket';
 
-const JoinRoom = ({ socket, username, setUsername, room, setRoom, setPage }) => {
-  const history = useHistory();
+const JoinRoom = ({ username, setUsername, room, setRoom, setPage }) => {
+  const socket = React.useContext(SocketContext);
 
   React.useEffect(() => {
     socket.on("room does not exist", () => {
-      alert("A room by that name does not exist.")
-    })
+      alert("A room by that name does not exist.");
+    });
 
     socket.on("name in use", () => {
-      alert("That username is already in use.")
+      alert("That username is already in use.");
+    });
+
+    socket.on("room full", () => {
+      alert("Room full.");
+    });
+
+    socket.on("game active", () => {
+      alert("That room is in the middle of a game. Wait until their game is over before joining.")
     })
 
     socket.on("joined room", () => {
-      setPage("multiplayer")
-    })
-  }, [history, socket, setPage])
+      setPage("multiplayer");
+    });
+  }, [socket, setPage]);
 
   const onSubmit = (event) => {
     event.preventDefault();
@@ -31,7 +39,7 @@ const JoinRoom = ({ socket, username, setUsername, room, setRoom, setPage }) => 
       );
     } else {
       socket.emit("join room", room, username)
-    }
+    };
   };
 
 

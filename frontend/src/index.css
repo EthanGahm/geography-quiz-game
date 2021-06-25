@@ -35,9 +35,9 @@ code {
 }
 
 .gamePanel {
+  line-height: 0.5;
   text-align: center;
   width: 95vw;
-  line-height: 0.5;
   margin: 2.5vh auto;
   overflow: auto;
   border: 3px solid rgb(43, 124, 40);
@@ -59,11 +59,6 @@ code {
 .google-map {
   height: 60vh;
   width: 100%;
-}
-
-.map-h2 {
-  font-size: 1.3rem;
-  font-weight: 400;
 }
 
 .placeName {

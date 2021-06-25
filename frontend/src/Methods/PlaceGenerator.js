@@ -7,4 +7,4 @@ export function getRandomCountry() {
   let randCountry = keys[randNum];
   let randCountryAbbr = countries[randCountry];
   return [randCountry, randCountryAbbr];
-}
+};

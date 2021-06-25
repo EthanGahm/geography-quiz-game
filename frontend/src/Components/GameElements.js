@@ -1,6 +1,7 @@
-import { Progress } from "semantic-ui-react";
 import FormatTime from "../Methods/FormatTime";
 import Timer from "./Timer";
+import UsersList from "./UsersList";
+import ProgressBars from "./ProgressBars";
 
 const GameElements = ({
   gameState,
@@ -11,28 +12,31 @@ const GameElements = ({
   onRestart,
   time,
   username,
+  users,
   winner
 }) => {
+  const start = () => {
+    if (Object.keys(users).length <= 1) {
+      alert("At least two players must be present in order to start the game.")
+    } else {
+      onStart()
+    }
+  }
+
   switch (gameState) {
     case "start":
       return (
         <>
-          <button className="button" onClick={onStart}>
+          <button className="button" onClick={start}>
             Start
           </button>
+          <UsersList users={users} username={username} />
         </>
       );
     case "game":
       return (
         <>
-          <Progress
-            value={score}
-            total={scoreOutOf}
-            progress="ratio"
-            color="green"
-            size="medium
-            "
-          />
+          <ProgressBars users={users} username={username} scoreOutOf={scoreOutOf} />
           <div className="placeName">
             <h2>Find: {currLocation}</h2>
           </div>
@@ -45,7 +49,7 @@ const GameElements = ({
       return (
         <>
           <h2>{winner === username ? "You won!" : "Winner: " + winner}</h2>
-          <h3>Your time: {FormatTime(time)}</h3>
+          <h3>Time: {FormatTime(time)}</h3>
           <button className="button" onClick={onRestart}>
             Play Again
           </button>

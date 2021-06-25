@@ -1,9 +1,10 @@
 import Map from "../Components/Map";
 import Geocode from "react-geocode";
 import React from "react";
-import { getRandomCountry } from "../Components/PlaceGenerator";
+import { getRandomCountry } from "../Methods/PlaceGenerator";
 import GameElements from "../Components/GameElements";
 import checkClick from "../Methods/CheckClick";
+import { SocketContext } from '../Context/Socket';
 
 const initialPinLocation = {
   lat: 0,
@@ -12,21 +13,34 @@ const initialPinLocation = {
 
 const { REACT_APP_APIKEY } = process.env;
 
-const Multiplayer = ({ socket, username, room }) => {
+const Multiplayer = ({ username, room, myId }) => {
+  const socket = React.useContext(SocketContext);
+
   const [currLocation, setCurrLocation] = React.useState([]);
   const [gameState, setGameState] = React.useState("start");
-  const [score, setScore] = React.useState(1);
   const [time, setTime] = React.useState(0);
-  const [winner, setWinner] = React.useState("")
+  const [winner, setWinner] = React.useState("");
+  const [users, setUsers] = React.useState({})
+  // const [users, setUsers] = React.useState({});
   // const [pings, setPings] = React.useState([]);
   // const [pingCount, setPingCount] = React.useState(0);
 
   const startTime = React.useRef();
   const scoreOutOf = React.useRef(2);
+  const scores = React.useRef({})
+
+  const start = React.useCallback((_startTime) => {
+    setCurrLocation(getRandomCountry());
+    setTime(0);
+    startTime.current = _startTime;
+    setGameState("game");
+  }, [])
 
   React.useEffect(() => {
     Geocode.setApiKey(REACT_APP_APIKEY);
+  }, [])
 
+  React.useEffect(() => {
     socket.on("finished", (username, finishTime) => {
       finish(username, finishTime);
     });
@@ -34,15 +48,23 @@ const Multiplayer = ({ socket, username, room }) => {
     socket.on("start", (startTime) => {
       start(startTime);
     });
-  }, [socket]);
 
-  function sendFinish(username, room, finishTime) {
-    socket.emit("finished", username, room, finishTime);
-  }
+    socket.on("update users list", (_users) => {
+      setUsers(_users);
+    });
+  }, [socket, start, users]);
+
+  function sendFinish() {
+    socket.emit("finished", username, room, time);
+  };
 
   function sendStart() {
     socket.emit("start", Math.floor(Date.now() / 10), room);
-  }
+  };
+
+  function sendCorrectGuess() {
+    socket.emit("correct guess");
+  };
 
   // Timer
   // When gameState changes to "game" a repeating interval of 10
@@ -67,11 +89,10 @@ const Multiplayer = ({ socket, username, room }) => {
       let correct = checkClick(lat, lng, currLocation);
       correct.then((correct) => {
         if (correct) {
-          setScore(() => score + 1);
-          if (score === scoreOutOf.current) {
-            sendFinish(username, room, time);
-            finish();
+          if (users[myId].score === scoreOutOf.current) {
+            sendFinish();
           } else {
+            sendCorrectGuess();
             // setPingCount(() => pingCount + 1);
             // setPings([
             //   { lat: lat, lng: lng, class: "correctPing", id: pingCount },
@@ -87,22 +108,14 @@ const Multiplayer = ({ socket, username, room }) => {
           // ]);
         }
       });
-    }
-  }
-
-  function start(_startTime) {
-    setGameState("game");
-    setCurrLocation(getRandomCountry());
-    setScore(1);
-    setTime(0);
-    startTime.current = _startTime;
-  }
+    };
+  };
 
   function finish(username, finishTime) {
-    setTime(finishTime)
-    setWinner(username)
+    setTime(finishTime);
+    setWinner(username);
     setGameState("game over");
-  }
+  };
 
   // function removePing() {
   //   setPings(pings.slice(0, pings.length - 1));
@@ -115,7 +128,6 @@ const Multiplayer = ({ socket, username, room }) => {
       </div>
       <div className="gamePanel">
         <GameElements
-          score={score}
           scoreOutOf={scoreOutOf.current}
           currLocation={currLocation[0]}
           onStart={sendStart}
@@ -123,6 +135,8 @@ const Multiplayer = ({ socket, username, room }) => {
           gameState={gameState}
           time={time}
           username={username}
+          users={users}
+          scores={scores.current}
           winner={winner}
         />
       </div>
