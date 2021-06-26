@@ -1,5 +1,6 @@
 import { createServer } from "http";
-import { Server } from "socket.io"
+import { Server } from "socket.io";
+import getCountryList from "./PlaceGenerator.js"
 
 const server = createServer();
 const io = new Server(server)
@@ -41,6 +42,8 @@ const io = new Server(server)
 let users = {}
 let rooms = {}
 
+const numCountries = 10;
+
 function usernameInRoom(username, room) {
   for (const user in rooms[room].users) {
     if (user.username === username) {
@@ -60,7 +63,7 @@ io.on("connection", (socket) => {
     } else {
       users[socket.id].username = username;
       users[socket.id].room = room;
-      rooms[room] = { gameState: "start", users: {} };
+      rooms[room] = { gameState: "start", users: {}, countryList: [] };
       rooms[room].users[socket.id] = users[socket.id];
       socket.join(room);
       socket.emit("joined room");
@@ -87,15 +90,19 @@ io.on("connection", (socket) => {
     };
   });
 
-  socket.on("correct guess", () => {
+  socket.on("correct guess", (country) => {
     let room = users[socket.id].room;
-    users[socket.id].score++;
-    io.to(users[socket.id].room).emit("update users list", rooms[room].users);
+    if (users[socket.id].score != numCountries && country[0] === rooms[room].countryList[users[socket.id].score - 1][0]) {
+      users[socket.id].score++;
+      socket.emit("new country", rooms[room].countryList[users[socket.id].score - 1]);
+      io.to(users[socket.id].room).emit("update users list", rooms[room].users);
+    }
   });
 
   socket.on("start", (startTime, room) => {
-    rooms[room].gameState = "game"
-    io.to(room).emit("start", startTime);
+    rooms[room].gameState = "game";
+    rooms[room].countryList = getCountryList(numCountries);
+    io.to(room).emit("start", startTime, rooms[room].countryList[0], numCountries);
   });
 
   socket.on("restart", (room) => {

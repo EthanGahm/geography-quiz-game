@@ -1,12 +1,11 @@
 import Map from "../Components/Map";
 import Geocode from "react-geocode";
 import React from "react";
-import { getRandomCountry } from "../Methods/PlaceGenerator";
 import GameElements from "../Components/GameElements";
 import checkClick from "../Methods/CheckClick";
 import { SocketContext } from '../Context/Socket';
 
-const initialPinLocation = {
+const initialMapCenter = {
   lat: 0,
   lng: 0,
 };
@@ -28,8 +27,9 @@ const Multiplayer = ({ username, room, myId, gameState, setGameState }) => {
   const scoreOutOf = React.useRef(2);
   const scores = React.useRef({})
 
-  const start = React.useCallback((_startTime) => {
-    setCurrLocation(getRandomCountry());
+  const start = React.useCallback((_startTime, country, numCountries) => {
+    setCurrLocation(country);
+    scoreOutOf.current = numCountries;
     setTime(0);
     startTime.current = _startTime;
     setGameState("game");
@@ -54,8 +54,12 @@ const Multiplayer = ({ username, room, myId, gameState, setGameState }) => {
   }, [])
 
   React.useEffect(() => {
-    socket.on("start", (startTime) => {
-      start(startTime);
+    socket.on("start", (startTime, country, numCountries) => {
+      start(startTime, country, numCountries);
+    });
+
+    socket.on("new country", (newCountry) => {
+      setCurrLocation(newCountry);
     });
 
     socket.on("finished", (username, finishTime) => {
@@ -88,7 +92,7 @@ const Multiplayer = ({ username, room, myId, gameState, setGameState }) => {
   }
 
   function sendCorrectGuess() {
-    socket.emit("correct guess");
+    socket.emit("correct guess", currLocation);
   };
 
   // Timer
@@ -117,13 +121,12 @@ const Multiplayer = ({ username, room, myId, gameState, setGameState }) => {
           if (users[myId].score === scoreOutOf.current) {
             sendFinish();
           } else {
-            sendCorrectGuess();
+            sendCorrectGuess(currLocation);
             // setPingCount(() => pingCount + 1);
             // setPings([
             //   { lat: lat, lng: lng, class: "correctPing", id: pingCount },
             //   ...pings,
             // ]);
-            setCurrLocation(getRandomCountry());
           }
         } else {
           // setPingCount(() => pingCount + 1);
@@ -161,7 +164,7 @@ const Multiplayer = ({ username, room, myId, gameState, setGameState }) => {
       </div>
       <div className="mapPanel">
         <Map
-          initialCenter={initialPinLocation}
+          initialCenter={initialMapCenter}
           zoomLevel={3}
           onClick={onMapClick}
         // pings={pings}
