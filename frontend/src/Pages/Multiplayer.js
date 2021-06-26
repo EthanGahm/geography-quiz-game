@@ -41,23 +41,39 @@ const Multiplayer = ({ username, room, myId, gameState, setGameState }) => {
     setGameState("game over");
   }, [setGameState]);
 
+  const restart = React.useCallback(() => {
+    setGameState("start");
+  }, [setGameState]);
+
+  const abort = React.useCallback(() => {
+    setGameState("aborted");
+  }, [setGameState]);
+
   React.useEffect(() => {
     Geocode.setApiKey(REACT_APP_APIKEY);
   }, [])
 
   React.useEffect(() => {
-    socket.on("finished", (username, finishTime) => {
-      finish(username, finishTime);
-    });
-
     socket.on("start", (startTime) => {
       start(startTime);
     });
 
+    socket.on("finished", (username, finishTime) => {
+      finish(username, finishTime);
+    });
+
+    socket.on("restart", () => {
+      restart();
+    });
+
+    socket.on("aborted", () => {
+      abort();
+    })
+
     socket.on("update users list", (_users) => {
       setUsers(_users);
     });
-  }, [socket, start, finish, users]);
+  }, [socket, start, finish, restart, abort, users]);
 
   function sendFinish() {
     socket.emit("finished", username, room, time);
@@ -66,6 +82,10 @@ const Multiplayer = ({ username, room, myId, gameState, setGameState }) => {
   function sendStart() {
     socket.emit("start", Math.floor(Date.now() / 10), room);
   };
+
+  function sendRestart() {
+    socket.emit("restart", room);
+  }
 
   function sendCorrectGuess() {
     socket.emit("correct guess");
@@ -123,14 +143,14 @@ const Multiplayer = ({ username, room, myId, gameState, setGameState }) => {
   return (
     <>
       <div className="headerPanel">
-        <h1>Room: {room}</h1>
+        <h1>{room}</h1>
       </div>
       <div className="gamePanel">
         <GameElements
           scoreOutOf={scoreOutOf.current}
           currLocation={currLocation[0]}
           onStart={sendStart}
-          onRestart={sendStart}
+          onRestart={sendRestart}
           gameState={gameState}
           time={time}
           username={username}

@@ -1,15 +1,3 @@
-// const express = require("express");
-// const http = require("http");
-// const app = express();
-// const server = http.createServer(app);
-// const socket = require("socket.io");
-// const io = socket(server);
-
-// import express from "express";
-// import http from "http";
-// import {}
-// const app = express();
-
 import { createServer } from "http";
 import { Server } from "socket.io"
 
@@ -106,14 +94,19 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start", (startTime, room) => {
+    rooms[room].gameState = "game"
+    io.to(room).emit("start", startTime);
+  });
+
+  socket.on("restart", (room) => {
     for (const user of Object.values(rooms[room].users)) {
       if (user.score != 1) {
         user.score = 1;
       }
     };
-    rooms[room].gameState = "game"
     io.to(users[socket.id].room).emit("update users list", rooms[room].users);
-    io.to(room).emit("start", startTime);
+    rooms[room].gameState = "start";
+    io.to(room).emit("restart");
   });
 
   socket.on("finished", (username, room, finishTime) => {

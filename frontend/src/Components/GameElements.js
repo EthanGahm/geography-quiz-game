@@ -55,6 +55,15 @@ const GameElements = ({
           </button>
         </>
       );
+    case "aborted":
+      return (
+        <>
+          <h2>Game aborted! All but one player left the game.</h2>
+          <button className="button" onClick={onRestart}>
+            Play Again
+          </button>
+        </>
+      );
     default:
       return <>GameState error</>;
   }
