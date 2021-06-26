@@ -3,6 +3,7 @@ import Home from "./Pages/Home";
 import CreateRoom from "./Pages/CreateRoom";
 import JoinRoom from "./Pages/JoinRoom"
 import Multiplayer from "./Pages/Multiplayer";
+import SinglePlayer from "./Pages/SinglePlayer";
 import { SocketContext, socket } from "./Context/Socket";
 
 const App = () => {
@@ -28,7 +29,7 @@ const App = () => {
       )
     case "single player":
       return (
-        <h1>Not yet implemented</h1>
+        <SinglePlayer />
       )
     case "create room":
       return (

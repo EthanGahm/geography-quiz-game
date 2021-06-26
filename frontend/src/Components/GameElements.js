@@ -6,7 +6,6 @@ import ProgressBars from "./ProgressBars";
 const GameElements = ({
   gameState,
   currLocation,
-  score,
   scoreOutOf,
   onStart,
   onRestart,

@@ -1,10 +1,17 @@
-import countries from "../countries";
+import countries from "../countries.js";
 
-export function getRandomCountry() {
+export default function getCountryList(numCountries) {
   let keys = Object.keys(countries);
-  let numCountries = keys.length;
-  let randNum = Math.floor(Math.random() * numCountries);
-  let randCountry = keys[randNum];
-  let randCountryAbbr = countries[randCountry];
-  return [randCountry, randCountryAbbr];
+  let countryList = []
+  let numKeys = keys.length;
+  for (let i = 0; i < numCountries; i++) {
+    let randNum = Math.floor(Math.random() * numKeys);
+    let randCountry = keys[randNum];
+    let randCountryAbbr = countries[randCountry];
+    countryList.push([randCountry, randCountryAbbr]);
+    keys[randNum] = keys[keys.length - 1];
+    keys.pop();
+    numKeys--;
+  };
+  return countryList;
 };

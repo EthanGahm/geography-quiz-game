@@ -83,10 +83,6 @@ code {
   font-family: inherit;
 }
 
-.button:focus {
-  outline: none;
-}
-
 .button:active {
   transform: scale(0.98);
 }
