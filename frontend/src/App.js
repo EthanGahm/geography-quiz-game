@@ -10,6 +10,7 @@ const App = () => {
   const [page, setPage] = React.useState("home");
   const [username, setUsername] = React.useState("");
   const [room, setRoom] = React.useState("");
+  const [gameState, setGameState] = React.useState("");
   const myId = React.useRef()
 
   React.useEffect(() => {
@@ -38,6 +39,7 @@ const App = () => {
             room={room}
             setRoom={setRoom}
             setPage={setPage}
+            setGameState={setGameState}
           />
         </SocketContext.Provider>
       )
@@ -50,6 +52,7 @@ const App = () => {
             room={room}
             setRoom={setRoom}
             setPage={setPage}
+            setGameState={setGameState}
           />
         </SocketContext.Provider>
       )
@@ -61,6 +64,8 @@ const App = () => {
             room={room}
             setPage={setPage}
             myId={myId.current}
+            gameState={gameState}
+            setGameState={setGameState}
           />
         </SocketContext.Provider>
       )

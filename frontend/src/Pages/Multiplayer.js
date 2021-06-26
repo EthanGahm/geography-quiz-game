@@ -13,11 +13,10 @@ const initialPinLocation = {
 
 const { REACT_APP_APIKEY } = process.env;
 
-const Multiplayer = ({ username, room, myId }) => {
+const Multiplayer = ({ username, room, myId, gameState, setGameState }) => {
   const socket = React.useContext(SocketContext);
 
   const [currLocation, setCurrLocation] = React.useState([]);
-  const [gameState, setGameState] = React.useState("start");
   const [time, setTime] = React.useState(0);
   const [winner, setWinner] = React.useState("");
   const [users, setUsers] = React.useState({})
@@ -34,7 +33,13 @@ const Multiplayer = ({ username, room, myId }) => {
     setTime(0);
     startTime.current = _startTime;
     setGameState("game");
-  }, [])
+  }, [setGameState])
+
+  const finish = React.useCallback((username, finishTime) => {
+    setTime(finishTime);
+    setWinner(username);
+    setGameState("game over");
+  }, [setGameState]);
 
   React.useEffect(() => {
     Geocode.setApiKey(REACT_APP_APIKEY);
@@ -52,7 +57,7 @@ const Multiplayer = ({ username, room, myId }) => {
     socket.on("update users list", (_users) => {
       setUsers(_users);
     });
-  }, [socket, start, users]);
+  }, [socket, start, finish, users]);
 
   function sendFinish() {
     socket.emit("finished", username, room, time);
@@ -109,12 +114,6 @@ const Multiplayer = ({ username, room, myId }) => {
         }
       });
     };
-  };
-
-  function finish(username, finishTime) {
-    setTime(finishTime);
-    setWinner(username);
-    setGameState("game over");
   };
 
   // function removePing() {

@@ -1,7 +1,7 @@
 import React from "react";
 import { SocketContext } from '../Context/Socket';
 
-const CreateRoom = ({ username, setUsername, room, setRoom, setPage }) => {
+const CreateRoom = ({ username, setUsername, room, setRoom, setPage, setGameState }) => {
   const socket = React.useContext(SocketContext);
 
   React.useEffect(() => {
@@ -10,9 +10,10 @@ const CreateRoom = ({ username, setUsername, room, setRoom, setPage }) => {
     });
 
     socket.on("joined room", () => {
+      setGameState("start")
       setPage("multiplayer")
     })
-  }, [socket, setPage])
+  }, [socket, setPage, setGameState])
 
   const onSubmit = (event) => {
     event.preventDefault();

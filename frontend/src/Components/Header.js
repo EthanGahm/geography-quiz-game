@@ -21,7 +21,7 @@ const Header = ({ page, room }) => {
     case "multiplayer":
       return (
         <div>
-          <h1>Room: {room}</h1>
+          <h1>{room}</h1>
         </div>
       );
     default:

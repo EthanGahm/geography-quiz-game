@@ -1,7 +1,7 @@
 import React from "react";
 import { SocketContext } from '../Context/Socket';
 
-const JoinRoom = ({ username, setUsername, room, setRoom, setPage }) => {
+const JoinRoom = ({ username, setUsername, room, setRoom, setPage, setGameState }) => {
   const socket = React.useContext(SocketContext);
 
   React.useEffect(() => {
@@ -21,10 +21,11 @@ const JoinRoom = ({ username, setUsername, room, setRoom, setPage }) => {
       alert("That room is in the middle of a game. Wait until their game is over before joining.")
     })
 
-    socket.on("joined room", () => {
+    socket.on("joined room", (gameState) => {
+      setGameState(gameState);
       setPage("multiplayer");
     });
-  }, [socket, setPage]);
+  }, [socket, setPage, setGameState]);
 
   const onSubmit = (event) => {
     event.preventDefault();
