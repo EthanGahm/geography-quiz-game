@@ -20,7 +20,6 @@ function usernameInRoom(username, room) {
 }
 
 io.on("connection", (socket) => {
-  console.log("connected")
   users[socket.id] = { username: "", score: 1, room: "" }
   socket.emit("your id", socket.id);
 
