@@ -1,43 +1,9 @@
-import { createServer } from "http";
-import { Server } from "socket.io";
-import getCountryList from "./PlaceGenerator.js"
+const PlaceGenerator = require("./PlaceGenerator.js")
 
-const server = createServer();
-const io = new Server(server)
-
-// Users format:
-// Each entry represents a single user
-/* 
-{
-  id_1: {
-    username: username_1,
-    score: score_1,
-    room: room_1
-  },
-  id_2: {
-    username: username_2,
-    score: score_2,
-    room: room_2
-  }
-}
-*/
-
-// Rooms format:
-// Each entry represents a single set of users (those inside that particular room)
-/* 
-{
-  room_1: {
-    id_1: {...user_1},
-    id_2: {...user_2},
-    id_3: {...user_3}, 
-  },
-  room_2: {
-    id_4: {...user_4},
-    id_5: {...user_5},
-  }
-}
-*/
-
+const app = require("express")();
+const httpServer = require("http").createServer(app);
+const options = {};
+const io = require("socket.io")(httpServer, options);
 
 let users = {}
 let rooms = {}
@@ -54,6 +20,7 @@ function usernameInRoom(username, room) {
 }
 
 io.on("connection", (socket) => {
+  console.log("connected")
   users[socket.id] = { username: "", score: 1, room: "" }
   socket.emit("your id", socket.id);
 
@@ -101,7 +68,7 @@ io.on("connection", (socket) => {
 
   socket.on("start", (startTime, room) => {
     rooms[room].gameState = "game";
-    rooms[room].countryList = getCountryList(numCountries);
+    rooms[room].countryList = PlaceGenerator.getCountryList(numCountries);
     io.to(room).emit("start", startTime, rooms[room].countryList[0], numCountries);
   });
 
@@ -138,4 +105,4 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(process.env.PORT || 8000, () => console.log("server is running on port 8000"));
+httpServer.listen(process.env.PORT || 8000, () => console.log("server is running on port 8000"));
