@@ -2,7 +2,6 @@
   "name": "geography-quiz-game",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://geography-quiz-game.herokuapp.com/",
   "dependencies": {
     "@iconify/icons-mdi": "^1.1.15",
     "@iconify/react": "^1.1.4",
