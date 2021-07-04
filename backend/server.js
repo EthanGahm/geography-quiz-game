@@ -95,7 +95,9 @@ io.on("connection", (socket) => {
         delete rooms[room];
       } else if (Object.keys(rooms[room].users).length === 1) {
         io.to(room).emit("update users list", rooms[room].users);
-        io.to(room).emit("aborted");
+        if (rooms[room].gameState === "start") {
+          io.to(room).emit("aborted");
+        }
       } else {
         io.to(room).emit("update users list", rooms[room].users);
       };
