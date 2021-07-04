@@ -13,7 +13,6 @@ const App = () => {
   const [room, setRoom] = React.useState("");
   const [gameState, setGameState] = React.useState("");
   const myId = React.useRef()
-  console.log(myId.current)
 
   React.useEffect(() => {
     socket.on("your id", (id) => {

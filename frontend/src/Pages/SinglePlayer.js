@@ -26,7 +26,6 @@ function SinglePlayer() {
     Geocode.setApiKey(REACT_APP_APIKEY);
 
     countryList.current = getCountryList(scoreOutOf.current)
-    console.log("countryList: " + countryList.current)
   }, []);
 
   React.useEffect(() => {
@@ -62,7 +61,6 @@ function SinglePlayer() {
   function start() {
     setGameState("game");
     setCurrLocation(countryList.current[0]);
-    console.log("currLocation: " + currLocation)
     setScore(1);
     setTime(0);
     startTime.current = Math.floor(Date.now() / 10)
